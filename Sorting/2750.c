@@ -25,7 +25,9 @@
 
 void bubbleSort(int* arr, int len);
 void insertionSort(int* arr, int len);
-void quickSort(int* arr, int len);
+void quickSort(int* arr, int len, int left, int right);
+int partition(int* arr, int len, int left, int right);
+int getMedianOfThree(int* arr, int len, int left, int right);
 void swap(int* a, int* b);
 
 int main(){
@@ -40,7 +42,8 @@ int main(){
     }
 
     // bubbleSort(arr, len);
-    insertionSort(arr,len);
+    // insertionSort(arr,len);
+    quickSort(arr, len, 0, len-1);
 
     for(int i=0; i<len; i++){
         printf("%d\n", arr[i]);
@@ -85,8 +88,56 @@ void insertionSort(int* arr, int len){
 }
 
 // Quick Sort
-void quickSort(int* arr, int len){
+void quickSort(int* arr, int len, int left, int right){
+    if(left < right){
+        int index = partition(arr, len, left, right);
 
+        quickSort(arr, len, left, index-1);
+        quickSort(arr, len, index+1, right);
+    }
+    
+}
+
+int partition(int* arr, int len, int left, int right){
+    int pivot = getMedianOfThree(arr, len, left, right);
+    int pivotValue = arr[pivot];
+
+    while(left <= right){
+        while(arr[left] <= pivotValue && left < right) left++;
+        while(arr[right] >= pivotValue && left <= right) right--;
+
+        if(left < right){
+            if(left == pivot) pivot = right;
+            else pivot = left;
+            
+            swap(&arr[left], &arr[right]);
+        }        
+        else break;
+    }
+
+    swap(&arr[pivot], &arr[right]);
+
+    return right;
+}
+
+int getMedianOfThree(int* arr, int len, int left, int right){
+    int l = arr[left];
+    int mid = arr[(left+right)/2];
+    int r = arr[right];
+
+    int median = left; 
+
+    if ((mid <= l && l <= r) || (r <= l && left <= mid)) {
+        median = l;
+    } 
+    else if ((l <= mid && mid <= r) || (r <= mid && mid <= l)) {
+        median = mid;
+    } 
+    else {
+        median = r;
+    }
+
+    return median;
 }
 
 void swap(int* a, int* b){
