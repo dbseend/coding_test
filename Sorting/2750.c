@@ -48,9 +48,6 @@ int main(){
     for(int i=0; i<len; i++){
         printf("%d\n", arr[i]);
     }
-    // for(int i=0; i<len; i++){
-    //     printf("%d ", arr[i]);
-    // }
 
     return 0;
 }
@@ -94,51 +91,51 @@ void quickSort(int* arr, int len, int left, int right){
 
         quickSort(arr, len, left, index-1);
         quickSort(arr, len, index+1, right);
-    }
-    
+    }   
 }
 
+/*
+1. pivot 선정: 중앙값(처음, 중간, 끝)
+2. pivot을 맨 왼쪽 요소로 이동
+3. 왼쪽에서 오른쪽으로 이동하면서 pivot보다 큰거나 같은 요소를 찾을 때 까지 이동
+4. 오른쪽에서 왼쪽으로 이동하면서 pivot보다 작거나 같은 요소를 찾을 때 까지 이동
+5. 3,4 번에서 조건을 충족하는 요소를 찾고 둘의 위치가 서로 지나치지 않았다면 교환
+6. 둘의 위치가 서로 지나치거나 만났다면 모든 요소를 검사했고 정렬이 완료되었다는 의미이므로 피벗의 위치와 지나친 위치와 교환
+*/
 int partition(int* arr, int len, int left, int right){
-    int pivot = getMedianOfThree(arr, len, left, right);
-    int pivotValue = arr[pivot];
+    int pivotIdx = getMedianOfThree(arr, len, left, right);
+
+    if(pivotIdx != left) swap(&arr[left], &arr[pivotIdx]);
+    pivotIdx = left;
+    int pivotValue = arr[pivotIdx];
+    left++;
 
     while(left <= right){
+
         while(arr[left] <= pivotValue && left < right) left++;
         while(arr[right] >= pivotValue && left <= right) right--;
 
-        if(left < right){
-            if(left == pivot) pivot = right;
-            else pivot = left;
-            
-            swap(&arr[left], &arr[right]);
-        }        
+        if(left < right) swap(&arr[left], &arr[right]);
         else break;
     }
 
-    swap(&arr[pivot], &arr[right]);
+    swap(&arr[pivotIdx], &arr[right]);
 
     return right;
 }
 
-int getMedianOfThree(int* arr, int len, int left, int right){
-    int l = arr[left];
-    int mid = arr[(left+right)/2];
-    int r = arr[right];
+int getMedianOfThree(int* arr, int len, int left, int right) {
+    int a = left;
+    int b = (left+right)/2;
+    int c = right;
 
-    int median = left; 
+    int l = arr[a], m = arr[b], r = arr[c];
 
-    if ((mid <= l && l <= r) || (r <= l && left <= mid)) {
-        median = l;
-    } 
-    else if ((l <= mid && mid <= r) || (r <= mid && mid <= l)) {
-        median = mid;
-    } 
-    else {
-        median = r;
-    }
-
-    return median;
+    if ((l <= m && m <= r) || (r <= m && m <= l)) return b;
+    else if ((m <= l && l <= r) || (r <= l && l <= m)) return a;
+    else return c;
 }
+
 
 void swap(int* a, int* b){
     int temp = *a;
